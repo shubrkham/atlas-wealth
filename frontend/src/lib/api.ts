@@ -136,7 +136,7 @@ export async function syncUser(payload: {
   email: string; 
   full_name: string | null 
 }): Promise<unknown> {
-  const { data } = await axios.post('http://localhost:8000/api/v1/auth/sync', payload)
+  const { data } = await api.post('/auth/sync', payload)
   return data
 }
 export async function getPortfolioRisk(portfolioId: string) {

@@ -143,4 +143,14 @@ export async function getPortfolioRisk(portfolioId: string) {
   const { data } = await api.get(`/portfolios/${portfolioId}/risk`)
   return data
 }
+export async function getMultipleQuotes(symbols: string[]): Promise<Record<string, {
+  symbol: string
+  price: number | null
+  change: number | null
+  change_pct: number | null
+  error?: string
+}>> {
+  const { data } = await api.get(`/market/quotes?symbols=${symbols.join(",")}`)
+  return data
+}
 export default api;

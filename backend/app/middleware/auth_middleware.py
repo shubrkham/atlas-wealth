@@ -8,24 +8,35 @@ from jose import JWTError, jwk, jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import settings
 from app.database import get_db
 from app.models.user import User
 
 security = HTTPBearer()
 
 
-@lru_cache(maxsize=1)
-def _fetch_jwks() -> dict[str, Any]:
-    response = httpx.get(settings.clerk_jwks_url, timeout=10.0)
+@lru_cache(maxsize=8)
+def _fetch_jwks(jwks_url: str) -> dict[str, Any]:
+    response = httpx.get(jwks_url, timeout=10.0)
     response.raise_for_status()
     return response.json()
 
 
+def _jwks_url_for_issuer(issuer: str) -> str:
+    return f"{issuer.rstrip('/')}/.well-known/jwks.json"
+
+
 def _verify_clerk_jwt(token: str) -> dict[str, Any]:
-    """Verify a Clerk session JWT and return its claims."""
+    """Verify a Clerk session JWT using the issuer embedded in the token."""
     try:
-        jwks = _fetch_jwks()
+        unverified_claims = jwt.get_unverified_claims(token)
+        issuer = unverified_claims.get("iss")
+        if not issuer or not isinstance(issuer, str):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token: missing issuer",
+            )
+
+        jwks = _fetch_jwks(_jwks_url_for_issuer(issuer))
         unverified_header = jwt.get_unverified_header(token)
         rsa_key = next(
             (key for key in jwks["keys"] if key["kid"] == unverified_header.get("kid")),
@@ -42,7 +53,7 @@ def _verify_clerk_jwt(token: str) -> dict[str, Any]:
             token,
             public_key,
             algorithms=["RS256"],
-            issuer=settings.CLERK_ISSUER,
+            issuer=issuer,
             options={"verify_aud": False},
         )
     except HTTPException:

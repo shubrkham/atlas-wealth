@@ -1,68 +1,90 @@
-"""Market data service using Alpha Vantage API."""
+"""Market data service using the Alpha Vantage API."""
+
+from __future__ import annotations
 
 import httpx
+
 from app.config import settings
 
 BASE_URL = "https://www.alphavantage.co/query"
 
 
+def _empty_quote(symbol: str, error: str) -> dict:
+    return {
+        "symbol": symbol.upper(),
+        "price": None,
+        "change": None,
+        "change_pct": None,
+        "volume": None,
+        "error": error,
+    }
+
+
+def _parse_change_pct(raw: str | None) -> float | None:
+    if not raw:
+        return None
+    try:
+        return float(str(raw).replace("%", "").strip())
+    except ValueError:
+        return None
+
+
+def _parse_global_quote(symbol: str, data: dict) -> dict:
+    if data.get("Note") or data.get("Information"):
+        return _empty_quote(symbol, "Alpha Vantage API rate limit reached. Try again shortly.")
+
+    quote = data.get("Global Quote") or {}
+    price_raw = quote.get("05. price")
+
+    if not price_raw:
+        return _empty_quote(symbol, "Symbol not found or quote unavailable")
+
+    return {
+        "symbol": str(quote.get("01. symbol", symbol)).upper(),
+        "price": float(price_raw),
+        "change": float(quote.get("09. change", 0) or 0),
+        "change_pct": _parse_change_pct(quote.get("10. change percent")),
+        "volume": int(float(quote.get("06. volume", 0) or 0)),
+    }
+
+
 async def get_quote(symbol: str) -> dict:
-    """Fetch real-time quote for a stock symbol."""
+    """Fetch a live quote for a single symbol."""
+    normalized = symbol.strip().upper()
+    if not normalized:
+        return _empty_quote(symbol, "Symbol is required")
+
     async with httpx.AsyncClient() as client:
         response = await client.get(
             BASE_URL,
             params={
                 "function": "GLOBAL_QUOTE",
-                "symbol": symbol.upper(),
+                "symbol": normalized,
                 "apikey": settings.ALPHA_VANTAGE_KEY,
             },
-            timeout=10.0,
+            timeout=15.0,
         )
         response.raise_for_status()
-        data = response.json()
-
-        quote = data.get("Global Quote", {})
-
-        if not quote or not quote.get("05. price"):
-            return {
-                "symbol": symbol.upper(),
-                "price": None,
-                "change": None,
-                "change_pct": None,
-                "volume": None,
-                "error": "Symbol not found or API limit reached",
-            }
-
-        return {
-            "symbol": quote.get("01. symbol", symbol.upper()),
-            "price": float(quote.get("05. price", 0)),
-            "change": float(quote.get("09. change", 0)),
-            "change_pct": float(
-                quote.get("10. change percent", "0%").replace("%", "")
-            ),
-            "volume": int(quote.get("06. volume", 0)),
-            "previous_close": float(quote.get("08. previous close", 0)),
-            "open": float(quote.get("02. open", 0)),
-            "high": float(quote.get("03. high", 0)),
-            "low": float(quote.get("04. low", 0)),
-        }
+        return _parse_global_quote(normalized, response.json())
 
 
 async def get_multiple_quotes(symbols: list[str]) -> dict[str, dict]:
-    """Fetch quotes for multiple symbols. Returns dict keyed by symbol."""
-    results = {}
+    """Fetch quotes for multiple symbols sequentially."""
+    results: dict[str, dict] = {}
+    seen: set[str] = set()
+
     for symbol in symbols:
+        normalized = symbol.strip().upper()
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
         try:
-            quote = await get_quote(symbol)
-            results[symbol.upper()] = quote
+            results[normalized] = await get_quote(normalized)
+        except httpx.HTTPError:
+            results[normalized] = _empty_quote(normalized, "Failed to fetch quote")
         except Exception:
-            results[symbol.upper()] = {
-                "symbol": symbol.upper(),
-                "price": None,
-                "change": None,
-                "change_pct": None,
-                "error": "Failed to fetch",
-            }
+            results[normalized] = _empty_quote(normalized, "Unexpected error fetching quote")
+
     return results
 
 
@@ -73,25 +95,32 @@ async def search_symbols(query: str) -> dict:
             BASE_URL,
             params={
                 "function": "SYMBOL_SEARCH",
-                "keywords": query,
+                "keywords": query.strip(),
                 "apikey": settings.ALPHA_VANTAGE_KEY,
             },
-            timeout=10.0,
+            timeout=15.0,
         )
         response.raise_for_status()
         data = response.json()
 
-        matches = data.get("bestMatches", [])
+    if data.get("Note") or data.get("Information"):
         return {
             "query": query,
-            "results": [
-                {
-                    "symbol": m.get("1. symbol", ""),
-                    "name": m.get("2. name", ""),
-                    "type": m.get("3. type", ""),
-                    "region": m.get("4. region", ""),
-                    "currency": m.get("8. currency", ""),
-                }
-                for m in matches[:8]
-            ],
+            "results": [],
+            "error": "Alpha Vantage API rate limit reached. Try again shortly.",
         }
+
+    matches = data.get("bestMatches") or []
+    return {
+        "query": query,
+        "results": [
+            {
+                "symbol": match.get("1. symbol", ""),
+                "name": match.get("2. name", ""),
+                "type": match.get("3. type", ""),
+                "region": match.get("4. region", ""),
+                "currency": match.get("8. currency", ""),
+            }
+            for match in matches[:10]
+        ],
+    }

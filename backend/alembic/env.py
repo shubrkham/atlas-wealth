@@ -6,14 +6,13 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from app.config import get_settings
+from app.config import settings
 from app.database import Base
 
 # Register all SQLAlchemy models with Base.metadata for autogenerate
 import app.models  # noqa: F401
 
 config = context.config
-settings = get_settings()
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)

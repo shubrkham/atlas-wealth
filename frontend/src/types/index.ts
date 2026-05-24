@@ -56,3 +56,13 @@ export type UpdateHoldingInput = {
   buy_date?: string;
   sector?: string;
 };
+export interface PortfolioRiskResponse {
+  health_score: number
+  diversification_score: number
+  concentration_risk: number
+  top_holding_pct: number
+  sector_distribution: Array<{ sector: string; percentage: number; value: number }>
+  holdings_count: number
+  risk_level: string
+  risk_factors: string[]
+};

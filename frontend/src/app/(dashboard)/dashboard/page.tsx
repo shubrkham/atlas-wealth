@@ -246,11 +246,11 @@ export default function DashboardPage() {
                   contentStyle={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, color: C.text }}
                   formatter={(value) => [formatCurrency(Number(value)), "P&L"]}
                 />
-                <Bar dataKey="pnl" radius={[4, 4, 0, 0]}>
-                  {pnlData.map((entry, index) => (
-                    <Cell key={index} fill={entry.fill} />
-                  ))}
-                </Bar>
+               <Bar dataKey="pnl" radius={[4, 4, 0, 0]} isAnimationActive={false}>
+  {pnlData.map((entry, index) => (
+    <Cell key={`cell-${index}`} fill={entry.pnl >= 0 ? "#10B981" : "#EF4444"} />
+  ))}
+</Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>

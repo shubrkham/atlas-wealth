@@ -5,18 +5,14 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Briefcase,
-  Eye,
   ShieldAlert,
-  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Portfolio", href: "/portfolio", icon: Briefcase },
-  { label: "Watchlist", href: "/watchlist", icon: Eye },
   { label: "Risk", href: "/risk", icon: ShieldAlert },
-  { label: "Settings", href: "/settings", icon: Settings },
 ] as const;
 
 export function Sidebar() {

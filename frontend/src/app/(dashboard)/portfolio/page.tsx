@@ -18,8 +18,12 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { useEffect } from "react";
 import type { Holding, AddHoldingInput, UpdateHoldingInput } from "@/types";
 
-function formatCurrency(value: number, currency = "USD") {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency, minimumFractionDigits: 2 }).format(value);
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    minimumFractionDigits: 2,
+  }).format(value);
 }
 
 function formatPercent(value: number) {
@@ -66,7 +70,7 @@ export default function PortfolioPage() {
     queryFn: async () => {
       const list = await getPortfolios();
       if (list.length === 0) {
-        const created = await createPortfolio("My Portfolio", "USD");
+        const created = await createPortfolio("My Portfolio", "INR");
         return [created];
       }
       return list;
@@ -132,7 +136,7 @@ export default function PortfolioPage() {
   }
 
   const isSubmitting = addMutation.isPending || updateMutation.isPending;
-  const currency = currentPortfolio?.currency ?? "USD";
+  const currency = currentPortfolio?.currency ?? "INR";
 
   if (portfoliosLoading || !syncQuery.isSuccess) {
     return <div style={{ padding: 24, color: "#A3ADC2" }}>Loading portfolio...</div>;

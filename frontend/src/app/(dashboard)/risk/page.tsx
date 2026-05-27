@@ -58,7 +58,7 @@ function mergeRisk(data: PortfolioRiskResponse | undefined): PortfolioRiskRespon
 function money(value: number | undefined) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     minimumFractionDigits: 2,
   }).format(value ?? 0);
 }
@@ -157,7 +157,7 @@ export default function RiskPage() {
     queryFn: async () => {
       const list = await getPortfolios();
       if (list.length === 0) {
-        const created = await createPortfolio("My Portfolio", "USD");
+        const created = await createPortfolio("My Portfolio", "INR");
         return [created];
       }
       return list;

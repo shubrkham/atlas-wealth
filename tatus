@@ -1,0 +1,16 @@
+* [33mf631d848[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m fix pnl chart colors
+* [33mbf7b41f9[m add landing page
+* [33m42f0f34c[m Phase 6 complete - dashboard with charts
+* [33m9fef14a2[m fix sync url hardcode
+* [33m8403aa03[m add clerk domain config
+* [33m39fb902f[m fix cors for vercel
+* [33mfa2b8fff[m add vercel url to cors
+* [33m7d76a16a[m add getMultipleQuotes to api
+* [33m6cbb9cf1[m fix npm peer deps for vercel
+* [33m59d23684[m fix python version for render
+* [33mb1d21b92[m Phase 4 and 5 complete - live prices and risk dashboard
+* [33m4a85b851[m remove node_modules
+* [33m9451a1c3[m Atlas Wealth - Phase 3 complete
+* [33m875a8e33[m remove backend node_modules
+* [33mcb6e6af4[m remove node_modules
+* [33m2a5e4805[m Atlas Wealth - Phase 3 complete

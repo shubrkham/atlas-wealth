@@ -18,7 +18,7 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { useEffect } from "react";
 import type { Holding, AddHoldingInput, UpdateHoldingInput } from "@/types";
 
-function formatCurrency(value: number) {
+function formatCurrency(value: number, _currency = "INR") {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
@@ -156,8 +156,8 @@ export default function PortfolioPage() {
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
         {[
-          { label: "Total Value", value: formatCurrency(summary.totalValue, currency), color: "#F4F6F9" },
-          { label: "Total Invested", value: formatCurrency(summary.totalInvested, currency), color: "#F4F6F9" },
+          { label: "Total Value", value: formatCurrency(summary.totalValue), color: "#F4F6F9" },
+          { label: "Total Invested", value: formatCurrency(summary.totalInvested), color: "#F4F6F9" },
           { label: "Total P&L", value: formatCurrency(summary.totalPnl, currency), color: summary.totalPnl >= 0 ? "#10B981" : "#EF4444" },
           { label: "Return %", value: formatPercent(summary.returnPct), color: summary.returnPct >= 0 ? "#10B981" : "#EF4444" },
         ].map((card) => (

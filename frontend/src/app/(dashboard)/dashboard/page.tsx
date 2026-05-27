@@ -24,7 +24,7 @@ import {
 } from "@/lib/api";
 
 function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
     minimumFractionDigits: 2,
@@ -135,13 +135,12 @@ export default function DashboardPage() {
 
   const allocationData = holdingsWithPrices.map((h) => ({
     name: h.symbol,
-    value: Math.round(((h.current_value ?? h.quantity * h.buy_price) / totalValue) * 100),
+    value: totalValue > 0 ? Math.round(((h.current_value ?? h.quantity * h.buy_price) / totalValue) * 100) : 0,
   }));
 
   const pnlData = holdingsWithPrices.map((h) => ({
     name: h.symbol,
     pnl: parseFloat((h.pnl ?? 0).toFixed(2)),
-    fill: (h.pnl ?? 0) >= 0 ? C.positive : C.negative,
   }));
 
   const metrics = [
@@ -160,7 +159,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Metrics */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
         {metrics.map((m) => (
           <div key={m.label} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
@@ -170,7 +168,6 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Best / Worst */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 24 }}>
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
           <p style={{ margin: "0 0 16px", fontSize: 12, color: C.muted, fontWeight: 500, textTransform: "uppercase", letterSpacing: 1 }}>Best Performer</p>
@@ -198,10 +195,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Charts */}
       {holdingsWithPrices.length > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
-          {/* Allocation Pie */}
           <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
             <p style={{ margin: "0 0 20px", fontSize: 16, fontWeight: 600, color: C.text }}>Portfolio Allocation</p>
             <ResponsiveContainer width="100%" height={240}>
@@ -235,29 +230,27 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* P&L Bar Chart */}
           <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
             <p style={{ margin: "0 0 20px", fontSize: 16, fontWeight: 600, color: C.text }}>P&L by Stock</p>
             <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={pnlData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+              <BarChart data={pnlData} margin={{ top: 0, right: 0, left: 10, bottom: 0 }}>
                 <XAxis dataKey="name" tick={{ fill: C.muted, fontSize: 12 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: C.muted, fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v}`} />
+                <YAxis tick={{ fill: C.muted, fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `₹${v}`} />
                 <Tooltip
                   contentStyle={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, color: C.text }}
                   formatter={(value) => [formatCurrency(Number(value)), "P&L"]}
                 />
-               <Bar dataKey="pnl" radius={[4, 4, 0, 0]} isAnimationActive={false}>
-  {pnlData.map((entry, index) => (
-    <Cell key={`cell-${index}`} fill={entry.pnl >= 0 ? "#10B981" : "#EF4444"} />
-  ))}
-</Bar>
+                <Bar dataKey="pnl" radius={[4, 4, 0, 0]} isAnimationActive={false}>
+                  {pnlData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.pnl >= 0 ? "#10B981" : "#EF4444"} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
       )}
 
-      {/* Holdings Summary */}
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
         <p style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 600, color: C.text }}>Holdings Summary</p>
         {holdingsWithPrices.length === 0 ? (

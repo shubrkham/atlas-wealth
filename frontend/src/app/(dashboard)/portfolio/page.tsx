@@ -18,7 +18,7 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { useEffect } from "react";
 import type { Holding, AddHoldingInput, UpdateHoldingInput } from "@/types";
 
-function formatCurrency(value: number, _currency = "INR") {
+function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
@@ -136,7 +136,6 @@ export default function PortfolioPage() {
   }
 
   const isSubmitting = addMutation.isPending || updateMutation.isPending;
-  const currency = currentPortfolio?.currency ?? "INR";
 
   if (portfoliosLoading || !syncQuery.isSuccess) {
     return <div style={{ padding: 24, color: "#A3ADC2" }}>Loading portfolio...</div>;
@@ -158,7 +157,7 @@ export default function PortfolioPage() {
         {[
           { label: "Total Value", value: formatCurrency(summary.totalValue), color: "#F4F6F9" },
           { label: "Total Invested", value: formatCurrency(summary.totalInvested), color: "#F4F6F9" },
-          { label: "Total P&L", value: formatCurrency(summary.totalPnl, currency), color: summary.totalPnl >= 0 ? "#10B981" : "#EF4444" },
+          { label: "Total P&L", value: formatCurrency(summary.totalPnl), color: summary.totalPnl >= 0 ? "#10B981" : "#EF4444" },
           { label: "Return %", value: formatPercent(summary.returnPct), color: summary.returnPct >= 0 ? "#10B981" : "#EF4444" },
         ].map((card) => (
           <div key={card.label} style={{ background: "#182135", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: 20 }}>
@@ -174,7 +173,7 @@ export default function PortfolioPage() {
         ) : holdingsWithPrices.length === 0 ? (
           <div style={{ padding: 60, textAlign: "center" }}>
             <p style={{ color: "#A3ADC2", margin: 0 }}>No holdings yet.</p>
-            <button onClick={openAdd} style={{ marginTop: 16, background: "none", border: "none", color: "#D4AF37", cursor: "pointer", textDecoration: "underline", fontSize: 14 }}>Add your first stock</button>
+            <button onClick={openAdd} style={{ marginTop: 16, background: "#D4AF37", border: "none", borderRadius: 8, padding: "10px 20px", color: "#0B1020", fontWeight: 700, cursor: "pointer", fontSize: 14 }}>+ Add Holding</button>
           </div>
         ) : (
           <div style={{ overflowX: "auto" }}>
@@ -192,11 +191,11 @@ export default function PortfolioPage() {
                     <td style={{ padding: "14px 16px" }}><span style={{ background: "rgba(212,175,55,0.15)", color: "#D4AF37", padding: "3px 8px", borderRadius: 6, fontSize: 13, fontWeight: 700 }}>{h.symbol}</span></td>
                     <td style={{ padding: "14px 16px", color: "#F4F6F9" }}>{h.company_name}</td>
                     <td style={{ padding: "14px 16px", color: "#A3ADC2" }}>{h.quantity}</td>
-                    <td style={{ padding: "14px 16px", color: "#A3ADC2" }}>{formatCurrency(h.buy_price, currency)}</td>
-                    <td style={{ padding: "14px 16px", color: "#F4F6F9" }}>{h.current_price ? formatCurrency(h.current_price, currency) : "—"}</td>
+                    <td style={{ padding: "14px 16px", color: "#A3ADC2" }}>{formatCurrency(h.buy_price)}</td>
+                    <td style={{ padding: "14px 16px", color: "#F4F6F9" }}>{h.current_price ? formatCurrency(h.current_price) : "—"}</td>
                     <td style={{ padding: "14px 16px", color: (h.day_change ?? 0) >= 0 ? "#10B981" : "#EF4444" }}>{h.day_change != null ? `${(h.day_change ?? 0) >= 0 ? "+" : ""}${h.day_change.toFixed(2)}` : "—"}</td>
-                    <td style={{ padding: "14px 16px", color: "#F4F6F9" }}>{formatCurrency(h.current_value ?? h.quantity * h.buy_price, currency)}</td>
-                    <td style={{ padding: "14px 16px", color: (h.pnl ?? 0) >= 0 ? "#10B981" : "#EF4444" }}>{formatCurrency(h.pnl ?? 0, currency)}</td>
+                    <td style={{ padding: "14px 16px", color: "#F4F6F9" }}>{formatCurrency(h.current_value ?? h.quantity * h.buy_price)}</td>
+                    <td style={{ padding: "14px 16px", color: (h.pnl ?? 0) >= 0 ? "#10B981" : "#EF4444" }}>{formatCurrency(h.pnl ?? 0)}</td>
                     <td style={{ padding: "14px 16px", color: (h.pnl_pct ?? 0) >= 0 ? "#10B981" : "#EF4444" }}>{formatPercent(h.pnl_pct ?? 0)}</td>
                     <td style={{ padding: "14px 16px" }}>
                       <div style={{ display: "flex", gap: 12 }}>
@@ -221,7 +220,7 @@ export default function PortfolioPage() {
                 {[
                   { label: "Symbol", key: "symbol", type: "text", placeholder: "AAPL" },
                   { label: "Company Name", key: "company_name", type: "text", placeholder: "Apple Inc" },
-                  { label: "Buy Price ($)", key: "buy_price", type: "number", placeholder: "150.00" },
+                  { label: "Buy Price (₹)", key: "buy_price", type: "number", placeholder: "150.00" },
                   { label: "Quantity", key: "quantity", type: "number", placeholder: "10" },
                   { label: "Buy Date", key: "buy_date", type: "date", placeholder: "" },
                 ].map((field) => (

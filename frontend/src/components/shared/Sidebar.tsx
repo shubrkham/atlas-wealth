@@ -22,7 +22,7 @@ export function Sidebar() {
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-[240px] flex-col bg-surface">
       <div className="flex h-[60px] items-center border-b border-white/5 px-6">
         <span className="text-xl font-bold tracking-tight text-[#D4AF37]">
-          Atlas Wealth
+          Kadam Capital
         </span>
       </div>
       <nav className="flex flex-1 flex-col gap-1 p-4">

@@ -48,7 +48,7 @@ export default function LandingPage() {
           <div style={{ width: 32, height: 32, background: "#D4AF37", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <TrendingUp size={18} color="#0B1020" />
           </div>
-          <span style={{ fontSize: 18, fontWeight: 700, color: "#F4F6F9", letterSpacing: "-0.02em" }}>Atlas Wealth</span>
+          <span style={{ fontSize: 18, fontWeight: 700, color: "#F4F6F9", letterSpacing: "-0.02em" }}>Kadam Capital</span>
         </div>
         <div style={{ display: "flex", gap: 12 }}>
           <button
@@ -79,7 +79,7 @@ export default function LandingPage() {
         </h1>
 
         <p style={{ margin: "0 auto 48px", fontSize: 20, color: "#A3ADC2", lineHeight: 1.6, maxWidth: 600 }}>
-          Atlas Wealth is a professional-grade investment analytics platform. Track stocks, analyze risk, and get real-time insights — without sharing your brokerage credentials.
+          Kadam Capital is a professional-grade investment analytics platform. Track stocks, analyze risk, and get real-time insights — without sharing your brokerage credentials.
         </p>
 
         <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
@@ -211,7 +211,7 @@ export default function LandingPage() {
           Start tracking your portfolio today
         </h2>
         <p style={{ margin: "0 auto 40px", fontSize: 18, color: "#A3ADC2", maxWidth: 480 }}>
-          Join investors who use Atlas Wealth to make smarter decisions.
+          Join investors who use Kadam Capital to make smarter decisions.
         </p>
         <button
           onClick={() => router.push("/register")}
@@ -229,9 +229,9 @@ export default function LandingPage() {
           <div style={{ width: 24, height: 24, background: "#D4AF37", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <TrendingUp size={13} color="#0B1020" />
           </div>
-          <span style={{ fontSize: 14, fontWeight: 700, color: "#F4F6F9" }}>Atlas Wealth</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: "#F4F6F9" }}>Kadam Capital</span>
         </div>
-        <p style={{ margin: 0, fontSize: 13, color: "#A3ADC2" }}>© 2026 Atlas Wealth. Built for serious investors.</p>
+        <p style={{ margin: 0, fontSize: 13, color: "#A3ADC2" }}>© 2026 Kadam Capital. Built for serious investors.</p>
       </footer>
     </div>
   );

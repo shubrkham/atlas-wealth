@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Atlas Wealth",
+  title: "Kadam Capital",
   description: "Premium wealth management dashboard",
 };
 

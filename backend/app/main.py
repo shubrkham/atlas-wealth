@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import analytics, auth, holdings, market, portfolio, watchlist
 
-app = FastAPI(title="Atlas Wealth API")
+app = FastAPI(title="Kadam Capital API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,4 +32,4 @@ app.include_router(watchlist.router, prefix=API_PREFIX)
 
 @app.get("/")
 async def health_check() -> dict[str, str]:
-    return {"status": "Atlas Wealth API is running"}
+    return {"status": "Kadam Capital API is running"}

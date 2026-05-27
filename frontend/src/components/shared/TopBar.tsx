@@ -6,7 +6,7 @@ export function TopBar() {
   return (
     <header className="fixed left-[240px] right-0 top-0 z-30 flex h-[60px] items-center justify-between border-b border-white/5 bg-surface px-6">
       <span className="text-xl font-bold tracking-tight text-[#D4AF37]">
-        Atlas Wealth
+        Kadam Capital
       </span>
       <UserButton
         appearance={{

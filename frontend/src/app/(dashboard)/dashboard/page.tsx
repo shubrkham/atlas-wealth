@@ -105,7 +105,7 @@ export default function DashboardPage() {
   const { data: liveQuotes } = useQuery({
     queryKey: ["quotes", symbols],
     queryFn: () => getMultipleQuotes(symbols),
-    enabled: symbols.length > 0,
+    enabled: symbols.length > 0 && !!portfolioId,
     staleTime: 30000,
   });
 
@@ -139,9 +139,9 @@ export default function DashboardPage() {
   }));
 
   const pnlData = holdingsWithPrices.map((h) => ({
-    name: h.symbol,
-    pnl: parseFloat((h.pnl ?? 0).toFixed(2)),
-  }));
+  name: h.symbol,
+  pnl: parseFloat((h.pnl ?? 0).toFixed(2)),
+}));
 
   const metrics = [
     { label: "Total Portfolio Value", value: formatCurrency(totalValue), color: C.text },
